@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Phase 1: Data Analysis
+  analysis:
+    build:
+      context: ./data_analysis
+      dockerfile: Dockerfile
+    container_name: bdd-analysis
+    volumes:
+      - ./bdd100k_images_100k:/data/images:ro
+      - ./bdd100k_labels:/data/labels:ro
+      - ./results/analysis:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATA_PATH=/data
+      - OUTPUT_PATH=/app/results
+    command: ["python", "analyze.py", "--data-dir", "/data", "--output-dir", "/app/results"]
+
+  # Phase 1b: Dashboard (optional - interactive visualization)
+  dashboard:
+    build:
+      context: ./data_analysis
+      dockerfile: Dockerfile
+    container_name: bdd-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./bdd100k_images_100k:/data/images:ro
+      - ./bdd100k_labels:/data/labels:ro
+      - ./results/analysis:/app/results:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+  # Phase 2: Model Training
+  training:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    container_name: bdd-training
+    volumes:
+      - ./bdd100k_images_100k:/data/images:ro
+      - ./bdd100k_labels:/data/labels:ro
+      - ./results/checkpoints:/checkpoints
+      - ./results/logs:/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    # Uncomment for GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: [
+      "--data-dir", "/data",
+      "--output-dir", "/checkpoints",
+      "--log-dir", "/logs",
+      "--epochs", "1",
+      "--batch-size", "2"
+    ]
+
+  # Phase 3: Evaluation
+  evaluation:
+    build:
+      context: ./evaluation
+      dockerfile: Dockerfile
+    container_name: bdd-evaluation
+    depends_on:
+      - training
+    volumes:
+      - ./bdd100k_images_100k:/data/images:ro
+      - ./bdd100k_labels:/data/labels:ro
+      - ./results/checkpoints:/checkpoints:ro
+      - ./results/metrics:/metrics
+      - ./results/visualizations:/visualizations
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: [
+      "--data-dir", "/data",
+      "--checkpoint", "/checkpoints/best_model.pth",
+      "--output-dir", "/metrics",
+      "--viz-dir", "/visualizations"
+    ]
+
+  # Phase 3b: Visualization (standalone)
+  visualize:
+    build:
+      context: ./evaluation
+      dockerfile: Dockerfile
+    container_name: bdd-visualize
+    volumes:
+      - ./bdd100k_images_100k:/data/images:ro
+      - ./bdd100k_labels:/data/labels:ro
+      - ./results/checkpoints:/checkpoints:ro
+      - ./results/visualizations:/visualizations
+    environment:
+      - PYTHONUNBUFFERED=1
+    entrypoint: ["python", "visualize.py"]
+    command: [
+      "--data-dir", "/data",
+      "--checkpoint", "/checkpoints/best_model.pth",
+      "--output-dir", "/visualizations",
+      "--num-samples", "50"
+    ]
