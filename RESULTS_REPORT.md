@@ -1,6 +1,6 @@
 # BDD100K Object Detection Results Report
 
-## Model Checkpoint: `checkpoint_epoch_1.pth`
+## Model trained for 1 epoch: Checkpoint: `checkpoint_epoch_1.pth`
 
 ### 1. Quantitative Evaluation (from `results/metrics/evaluation_metrics.json`)
 
