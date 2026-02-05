@@ -1,0 +1,26 @@
+{
+  "train": {
+    "car": null,
+    "truck": null,
+    "bus": null,
+    "person": null,
+    "bike": null,
+    "motorcycle": null,
+    "rider": null,
+    "traffic light": null,
+    "traffic sign": null,
+    "train": null
+  },
+  "val": {
+    "car": null,
+    "truck": null,
+    "bus": null,
+    "person": null,
+    "bike": null,
+    "motorcycle": null,
+    "rider": null,
+    "traffic light": null,
+    "traffic sign": null,
+    "train": null
+  }
+}

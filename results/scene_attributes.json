@@ -1,0 +1,54 @@
+{
+  "train": {
+    "weather": {
+      "clear": 37412,
+      "rainy": 5083,
+      "undefined": 8134,
+      "snowy": 5571,
+      "overcast": 8784,
+      "partly cloudy": 4886,
+      "foggy": 130
+    },
+    "timeofday": {
+      "daytime": 36800,
+      "dawn/dusk": 5033,
+      "night": 28028,
+      "undefined": 139
+    },
+    "scene": {
+      "city street": 43581,
+      "highway": 17414,
+      "residential": 8105,
+      "parking lot": 378,
+      "undefined": 366,
+      "tunnel": 129,
+      "gas stations": 27
+    }
+  },
+  "val": {
+    "weather": {
+      "overcast": 1239,
+      "clear": 5346,
+      "undefined": 1157,
+      "rainy": 738,
+      "snowy": 769,
+      "partly cloudy": 738,
+      "foggy": 13
+    },
+    "timeofday": {
+      "daytime": 5258,
+      "night": 3929,
+      "dawn/dusk": 778,
+      "undefined": 35
+    },
+    "scene": {
+      "city street": 6112,
+      "highway": 2499,
+      "tunnel": 27,
+      "residential": 1253,
+      "parking lot": 49,
+      "gas stations": 7,
+      "undefined": 53
+    }
+  }
+}
